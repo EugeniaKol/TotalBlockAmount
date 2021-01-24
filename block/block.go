@@ -7,3 +7,8 @@ type Block struct {
 		} `json:"transactions"`
 	} `json:"result"`
 }
+
+type Stats struct {
+	Transactions int     `json:"transactions"`
+	Amount       float64 `json:"amount"`
+}
