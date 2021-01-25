@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	tools "github.com/EugeniaKol/forums_system/server/tools"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
-	//b "github.com/EugeniaKol/TotalBlockAmount/block"
 )
 
 func TotalHandler(rw http.ResponseWriter, r *http.Request) {
@@ -16,9 +16,7 @@ func TotalHandler(rw http.ResponseWriter, r *http.Request) {
 
 	if Conf.EnableCaching == true {
 		if isCached, value := CacheGetRequest(blockStr); isCached == true {
-			rw.Header().Set("content-type", "application/json")
-			rw.WriteHeader(200)
-			fmt.Fprint(rw, value)
+			tools.WriteJSONOk(rw, value)
 			return
 		}
 	}
@@ -27,18 +25,21 @@ func TotalHandler(rw http.ResponseWriter, r *http.Request) {
 	block, err := BlockRequest(blockNum)
 	if err != nil {
 		fmt.Println(err)
+		tools.WriteJSONBadRequest(rw, err.Error())
 		return
 	}
 
 	res, err := block.CalculateTotal()
 	if err != nil {
 		fmt.Println(err)
+		tools.WriteJSONInternalError(rw)
 		return
 	}
 
 	cacheInput, err := json.Marshal(res)
 	if err != nil {
 		fmt.Println(err)
+		tools.WriteJSONInternalError(rw)
 	}
 
 	if Conf.EnableCaching == true {
@@ -48,7 +49,8 @@ func TotalHandler(rw http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	rw.Header().Set("content-type", "application/json")
+	tools.WriteJSONOk(rw, res)
+	/*rw.Header().Set("content-type", "application/json")
 	rw.WriteHeader(200)
-	_ = json.NewEncoder(rw).Encode(res)
+	_ = json.NewEncoder(rw).Encode(res)*/
 }

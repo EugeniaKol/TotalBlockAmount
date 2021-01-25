@@ -25,17 +25,19 @@ func BlockRequest(blockNum int) (b.Block, error) {
 	return block, nil
 }
 
-func CacheGetRequest(block string) (isCached bool, res string) {
+func CacheGetRequest(block string) (isCached bool, res b.Stats) {
 	fmt.Println("searching block", block)
 	cached, err := StClient.Client.Get(StClient.Client.Context(), block).Result()
+	var stats b.Stats
 
-	fmt.Print("result from redis for: ", block, cached)
+	_ = json.Unmarshal([]byte(cached), &stats)
+	fmt.Print("result from redis for: ", block, "  ", cached)
 
 	if err != nil {
 		fmt.Println(err)
-		return false, ""
+		return false, b.Stats{}
 	}
-	return true, cached
+	return true, stats
 }
 
 func CachePostRequest(block string, value []byte) error {
