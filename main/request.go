@@ -6,7 +6,6 @@ import (
 	"fmt"
 	b "github.com/EugeniaKol/TotalBlockAmount/block"
 	"net/http"
-	//"github.com/go-redis/redis"
 )
 
 func BlockRequest(blockNum int) (b.Block, error) {
@@ -24,4 +23,25 @@ func BlockRequest(blockNum int) (b.Block, error) {
 		return b.Block{}, errors.New("api key usage limit reached, please try again")
 	}
 	return block, nil
+}
+
+func CacheGetRequest(block string) (isCached bool, res string) {
+	fmt.Println("searching block", block)
+	cached, err := StClient.Client.Get(StClient.Client.Context(), block).Result()
+
+	fmt.Print("result from redis for: ", block, cached)
+
+	if err != nil {
+		fmt.Println(err)
+		return false, ""
+	}
+	return true, cached
+}
+
+func CachePostRequest(block string, value []byte) error {
+	err := StClient.Client.Set(StClient.Client.Context(), block, value, 0).Err()
+	if err != nil {
+		return err
+	}
+	return nil
 }

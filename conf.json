@@ -1,4 +1,5 @@
 {
   "api_key": "YourApiKeyToken",
-  "port": ":8181"
+  "port": ":8181",
+  "enable_caching": true
 }

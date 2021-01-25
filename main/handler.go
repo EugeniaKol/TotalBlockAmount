@@ -14,18 +14,10 @@ func TotalHandler(rw http.ResponseWriter, r *http.Request) {
 	blockStr := vars["blockNumber"]
 	blockNum, _ := strconv.Atoi(blockStr)
 
-	fmt.Println("searching block", blockStr)
-	cached, err := StClient.Client.Get(StClient.Client.Context(), blockStr).Result()
-
-	fmt.Print("result from redis for: ", blockNum, cached)
-
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("got cashed", cached)
+	if isCached, value := CacheGetRequest(blockStr); isCached == true {
 		rw.Header().Set("content-type", "application/json")
 		rw.WriteHeader(200)
-		fmt.Fprint(rw, cached)
+		fmt.Fprint(rw, value)
 		return
 	}
 
@@ -47,11 +39,10 @@ func TotalHandler(rw http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	err = StClient.Client.Set(StClient.Client.Context(), blockStr, cacheInput, 0).Err()
-	if err != nil {
+	if err = CachePostRequest(blockStr, cacheInput); err != nil {
 		fmt.Println(err)
+		return
 	}
-
 	rw.Header().Set("content-type", "application/json")
 	rw.WriteHeader(200)
 	_ = json.NewEncoder(rw).Encode(res)
