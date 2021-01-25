@@ -12,20 +12,17 @@ type DbClient struct {
 }
 
 func GetRedisClient() {
-	var client DbClient
-	client.Client = redis.NewClient(&redis.Options{
+	StClient.Client = redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "",
 		DB:       0,
 	})
 
-	StClient = client
-
 	pong, err := StClient.Client.Ping(StClient.Client.Context()).Result()
 
 	if err != nil {
 		fmt.Println(pong, err)
-		Conf.EnableCaching = true
+		Conf.EnableCaching = false
 	}
 }
 

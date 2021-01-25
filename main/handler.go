@@ -14,11 +14,13 @@ func TotalHandler(rw http.ResponseWriter, r *http.Request) {
 	blockStr := vars["blockNumber"]
 	blockNum, _ := strconv.Atoi(blockStr)
 
-	if isCached, value := CacheGetRequest(blockStr); isCached == true {
-		rw.Header().Set("content-type", "application/json")
-		rw.WriteHeader(200)
-		fmt.Fprint(rw, value)
-		return
+	if Conf.EnableCaching == true {
+		if isCached, value := CacheGetRequest(blockStr); isCached == true {
+			rw.Header().Set("content-type", "application/json")
+			rw.WriteHeader(200)
+			fmt.Fprint(rw, value)
+			return
+		}
 	}
 
 	//fmt.Println("not cashed")
@@ -39,10 +41,13 @@ func TotalHandler(rw http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	if err = CachePostRequest(blockStr, cacheInput); err != nil {
-		fmt.Println(err)
-		return
+	if Conf.EnableCaching == true {
+		if err = CachePostRequest(blockStr, cacheInput); err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
+
 	rw.Header().Set("content-type", "application/json")
 	rw.WriteHeader(200)
 	_ = json.NewEncoder(rw).Encode(res)

@@ -13,43 +13,36 @@ func TestBlock_CalculateTotal(t *testing.T) {
 			name: "Basic",
 			args: Block{
 				Result: Result{
-					Transactions: []Transaction{
-						{
-							Value: "0x00",
-						},
-						{
-							Value: "0x00",
-						},
-					},
+					Transactions: []Transaction{{
+						Value: "0x13",
+					}, {
+						Value: "0x54",
+					}},
 				},
 			},
 			expected: Stats{
 				Transactions: 2,
-				Amount:       0,
+				Amount:       1.03e-16,
 			},
 			exError: nil,
 		},
 
 		{
-			name: "Basic",
+			name: "Basic#2",
 			args: Block{
 				Result: Result{
-					Transactions: []Transaction{
-						{
-							Value: "0x00",
-						},
-						{
-							Value: "0x00",
-						},
-						{
-							Value: "0x00",
-						},
-					},
+					Transactions: []Transaction{{
+						Value: "0x00",
+					}, {
+						Value: "0x57cf",
+					}, {
+						Value: "0x847",
+					}},
 				},
 			},
 			expected: Stats{
 				Transactions: 3,
-				Amount:       0,
+				Amount:       2.4597999999999998e-14,
 			},
 			exError: nil,
 		},
@@ -57,7 +50,7 @@ func TestBlock_CalculateTotal(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			res, err := testCase.args.CalculateTotal()
 			if res != testCase.expected {
-				t.Errorf("expected total %f, got %f", testCase.expected.Amount, res.Amount)
+				t.Error("expected ", testCase.expected, " got ", res)
 			} else if testCase.exError != err {
 				t.Error("unexpected error:", err)
 			}
