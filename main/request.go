@@ -6,6 +6,7 @@ import (
 	"fmt"
 	b "github.com/EugeniaKol/TotalBlockAmount/block"
 	"net/http"
+	//"github.com/go-redis/redis"
 )
 
 func BlockRequest(blockNum int) (b.Block, error) {

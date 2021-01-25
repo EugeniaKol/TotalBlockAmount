@@ -15,10 +15,10 @@ func TestBlock_CalculateTotal(t *testing.T) {
 				Result: Result{
 					Transactions: []Transaction{
 						{
-							Value: "0x124c6",
+							Value: "0x00",
 						},
 						{
-							Value: "0x65778f",
+							Value: "0x00",
 						},
 					},
 				},
@@ -36,16 +36,19 @@ func TestBlock_CalculateTotal(t *testing.T) {
 				Result: Result{
 					Transactions: []Transaction{
 						{
-							Value: "0x1ad3467",
+							Value: "0x00",
 						},
 						{
-							Value: "0x657fg",
+							Value: "0x00",
+						},
+						{
+							Value: "0x00",
 						},
 					},
 				},
 			},
 			expected: Stats{
-				Transactions: 2,
+				Transactions: 3,
 				Amount:       0,
 			},
 			exError: nil,
