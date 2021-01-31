@@ -30,3 +30,5 @@ command in the main directory. To use Redis, the following commands must be exec
 $ docker pull redis
 $ docker run --name redis-test-instance -p 6379:6379 -d redis
 ```
+
+###### TODO: fix issue with build -- installing go-redis package produces error
