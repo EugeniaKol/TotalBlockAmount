@@ -32,6 +32,7 @@ func main() {
 	GetRedisClient()
 
 	router := mux.NewRouter()
+
 	router.HandleFunc("/api/block/{blockNumber:[0-9]+}/total", TotalHandler)
 	http.Handle("/", router)
 	fmt.Println("Server is listening...")
