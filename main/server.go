@@ -19,7 +19,6 @@ func GetRedisClient() {
 	})
 
 	pong, err := StClient.Client.Ping(StClient.Client.Context()).Result()
-
 	if err != nil {
 		fmt.Println(pong, err)
 		Conf.EnableCaching = false

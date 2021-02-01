@@ -3,43 +3,55 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	tools "github.com/EugeniaKol/forums_system/server/tools"
 	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
 )
+
+type ErrorResp struct {
+	Message string `json:"message"`
+}
 
 func TotalHandler(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	blockStr := vars["blockNumber"]
 	blockNum, _ := strconv.Atoi(blockStr)
 
+	//if caching is enabled
 	if Conf.EnableCaching == true {
 		if isCached, value := CacheGetRequest(blockStr); isCached == true {
-			tools.WriteJSONOk(rw, value)
+			rw.Header().Set("content-type", "application/json")
+			rw.WriteHeader(200)
+			_ = json.NewEncoder(rw).Encode(value)
 			return
 		}
 	}
 
-	//fmt.Println("not cashed")
+	//if caching is disabled
 	block, err := BlockRequest(blockNum)
 	if err != nil {
 		fmt.Println(err)
-		tools.WriteJSONBadRequest(rw, err.Error())
+		rw.Header().Set("content-type", "application/json")
+		rw.WriteHeader(400)
+		_ = json.NewEncoder(rw).Encode(ErrorResp{err.Error()})
 		return
 	}
 
 	res, err := block.CalculateTotal()
 	if err != nil {
 		fmt.Println(err)
-		tools.WriteJSONInternalError(rw)
+		rw.Header().Set("content-type", "application/json")
+		rw.WriteHeader(500)
+		_ = json.NewEncoder(rw).Encode(ErrorResp{err.Error()})
 		return
 	}
 
 	cacheInput, err := json.Marshal(res)
 	if err != nil {
 		fmt.Println(err)
-		tools.WriteJSONInternalError(rw)
+		rw.Header().Set("content-type", "application/json")
+		rw.WriteHeader(500)
+		_ = json.NewEncoder(rw).Encode(ErrorResp{err.Error()})
 	}
 
 	if Conf.EnableCaching == true {
@@ -49,8 +61,7 @@ func TotalHandler(rw http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	tools.WriteJSONOk(rw, res)
-	/*rw.Header().Set("content-type", "application/json")
+	rw.Header().Set("content-type", "application/json")
 	rw.WriteHeader(200)
-	_ = json.NewEncoder(rw).Encode(res)*/
+	_ = json.NewEncoder(rw).Encode(res)
 }

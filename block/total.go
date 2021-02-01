@@ -15,9 +15,6 @@ func (block Block) CalculateTotal() (Stats, error) {
 		num, _ := new(big.Int).SetString(val, 16)
 		f := new(big.Float).SetInt(num)
 		wei, _ := f.Float64()
-		//fmt.Println(acc)
-
-		//eth, err := strconv.ParseUint(val, 16, 64)
 
 		if num == nil {
 			return Stats{}, errors.New("cant parse value")
