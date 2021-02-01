@@ -1,4 +1,4 @@
-module github.com/EugeniaKol/Total_Block_Amount
+module github.com/EugeniaKol/TotalBlockAmount
 
 go 1.15
 
